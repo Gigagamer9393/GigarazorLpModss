@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GigarazorLp Forum</title>
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #1e1e1e, #111);
+  color: #fff;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Forum Titel */
+h1.floating-title {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.2rem;
+  background: linear-gradient(90deg, #8b5cf6, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glow 3s ease-in-out infinite;
+  z-index: 999;
+}
+@keyframes glow {
+  0%,100%{text-shadow:0 0 10px #8b5cf6;}
+  50%{text-shadow:0 0 20px #ec4899;}
+}
+
+/* Ladebalken */
+#loadingBarContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 180px;
+  height: 10px;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  z-index: 1000;
+  perspective: 500px;
+  opacity:0;
+  transition:opacity 0.5s ease;
+}
+#loadingBar {
+  width:0%;
+  height:100%;
+  background: linear-gradient(90deg, #8b5cf6, #9333ea, #ec4899, #a855f7);
+  border-radius:10px;
+  transition: width 0.05s linear;
+  animation: glowGradient 2s ease-in-out infinite, wobble 0.6s ease-in-out infinite alternate;
+  transform-origin:center center;
+  position:relative;
+}
+@keyframes glowGradient {
+  0%{box-shadow:0 0 8px #8b5cf6;background-position:0% 50%;}
+  50%{box-shadow:0 0 20px #ec4899;background-position:100% 50%;}
+  100%{box-shadow:0 0 8px #8b5cf6;background-position:0% 50%;}
+}
+@keyframes wobble {
+  0%{transform:rotateX(0deg) scaleY(1);}
+  50%{transform:rotateX(3deg) scaleY(1.05);}
+  100%{transform:rotateX(0deg) scaleY(1);}
+}
+#loadingPercent{position:fixed;top:10px;right:210px;color:#c084fc;font-weight:bold;display:none;text-shadow:0 0 10px #8b5cf6;opacity:0;transition:opacity 0.5s ease;}
+#loadingText{position:fixed;top:35px;right:20px;font-size:0.9rem;color:#aaa;font-style:italic;display:none;opacity:0;transition:opacity 0.5s ease;}
+
+/* Login Box */
+.container{
+  background: linear-gradient(145deg,#2c2c2c,#1b1b1b);
+  border-radius: 20px;
+  padding:35px 40px;
+  box-shadow:0 0 30px rgba(139,92,246,0.5);
+  text-align:center;
+  width:400px;
+  max-width:90%;
+  opacity:1;
+  transition: opacity 0.5s;
+}
+#loginBox{
+  border:2px solid rgba(139,92,246,0.4);
+  animation: popIn 0.7s ease forwards, pulseGlow 4s ease-in-out infinite;
+}
+@keyframes popIn{
+  0%{opacity:0;transform:scale(0.8);}
+  60%{opacity:1;transform:scale(1.05);}
+  100%{transform:scale(1);}
+}
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 15px rgba(139,92,246,0.3),0 0 0px rgba(168,85,247,0.2);border-color:rgba(139,92,246,0.4);}
+  50%{box-shadow:0 0 35px rgba(168,85,247,0.6),0 0 10px rgba(236,72,153,0.3);border-color:rgba(236,72,153,0.6);}
+  100%{box-shadow:0 0 15px rgba(139,92,246,0.3),0 0 0px rgba(168,85,247,0.2);border-color:rgba(139,92,246,0.4);}
+}
+#loginBox h2{
+  color:#c084fc;font-size:1.8rem;margin-bottom:20px;text-shadow:0 0 10px #8b5cf6;
+}
+#loginBox input{
+  width:100%;padding:12px 15px;margin:12px 0;border-radius:12px;border:1px solid #8b5cf6;background:#1a1a1a;color:#fff;font-size:1rem;transition:0.3s;
+}
+#loginBox input:focus{
+  outline:none;box-shadow:0 0 12px #8b5cf6;border-color:#a855f7;
+}
+#loginBox button{
+  width:100%;padding:12px;margin-top:15px;border:none;border-radius:25px;background:linear-gradient(90deg,#8b5cf6,#9333ea);color:#fff;font-weight:bold;cursor:pointer;font-size:1rem;transition:0.3s;box-shadow:0 0 20px rgba(139,92,246,0.5);animation:pulseButton 4s ease-in-out infinite;
+}
+#loginBox button:hover{
+  background:linear-gradient(90deg,#a855f7,#c084fc);transform:scale(1.05);box-shadow:0 0 30px rgba(168,85,247,0.6);
+}
+@keyframes pulseButton{
+  0%{box-shadow:0 0 15px rgba(139,92,246,0.3);}
+  50%{box-shadow:0 0 30px rgba(236,72,153,0.6);}
+  100%{box-shadow:0 0 15px rgba(139,92,246,0.3);}
+}
+#message{margin-top:10px;font-weight:bold;}
+
+/* Forum */
+#forum{display:none;text-align:center;margin-top:20px;opacity:0;}
+@keyframes fadeInUpForum{0%{opacity:0;transform:translateY(50px);}100%{opacity:1;transform:translateY(0);}}
+.slogan{font-size:1.15rem;margin-bottom:20px;color:#aaa;}
+.downloads{display:flex;flex-direction:column;gap:15px;}
+.mod-box{background:#3b3b3b;padding:15px 20px;border-radius:15px;display:flex;justify-content:space-between;align-items:center;transition:0.3s;border:2px solid rgba(139,92,246,0.2);box-shadow:0 0 15px rgba(139,92,246,0.2);animation:pulseBox 4s ease-in-out infinite;}
+.mod-box:hover{background:#4b4b4b;transform:scale(1.02);}
+.mod-info strong{color:#c084fc;font-size:1.1rem;}
+.status{font-weight:bold;border-radius:8px;padding:5px 10px;font-size:0.85rem;text-align:center;min-width:90px;}
+.status.undetected{color:#10b981;animation:blinkGreen 1.2s infinite;}
+.status.detected{color:#ef4444;animation:blinkRed 1s infinite;}
+@keyframes blinkGreen{50%{opacity:0.5;}}
+@keyframes blinkRed{50%{opacity:0.5;}}
+@keyframes pulseBox{
+  0%{box-shadow:0 0 10px rgba(139,92,246,0.2),0 0 0px rgba(168,85,247,0.1);border-color:rgba(139,92,246,0.2);}
+  50%{box-shadow:0 0 25px rgba(168,85,247,0.4),0 0 8px rgba(236,72,153,0.2);border-color:rgba(236,72,153,0.4);}
+  100%{box-shadow:0 0 10px rgba(139,92,246,0.2),0 0 0px rgba(168,85,247,0.1);border-color:rgba(139,92,246,0.2);}
+}
+.download-btn{margin-left:10px;background:#8b5cf6;padding:8px 18px;border-radius:12px;text-decoration:none;color:#fff;font-weight:bold;transition:0.3s;animation:pulseButton 4s ease-in-out infinite;}
+.download-btn:hover{background:#a855f7;transform:scale(1.05);}
+.link-buttons{margin-top:30px;display:flex;justify-content:center;gap:15px;}
+.link-btn{padding:12px 22px;border-radius:25px;color:#fff;font-weight:bold;text-decoration:none;transition:0.3s;animation:pulseButton 4s ease-in-out infinite;}
+.youtube{background:#ff0000;}
+.youtube:hover{background:#cc0000;}
+.discord{background:#5865F2;}
+.discord:hover{background:#4752C4;}
+
+/* Partikel & Trail */
+.particle{position:absolute;top:-2px;width:30px;height:14px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff,rgba(255,255,255,0));filter:blur(4px);}
+.trail{position:absolute;top:0;height:100%;border-radius:10px;background:linear-gradient(to right,rgba(255,255,255,0.5),rgba(255,255,255,0));pointer-events:none;filter:blur(8px);}
+</style>
+</head>
+<body>
+<div id="loadingPercent">0%</div>
+<div id="loadingBarContainer"><div id="loadingBar"></div></div>
+<div id="loadingText">Authentifizierung läuft...</div>
+<h1 class="floating-title" id="forumTitle">GigarazorLp Forum</h1>
+
+<div class="container" id="loginBox">
+  <h2>Login mit Code</h2>
+  <input type="text" id="codeInput" placeholder="Gib deinen Code ein"><br>
+  <button id="loginBtn">Einloggen</button>
+  <div id="message"></div>
+</div>
+
+<div class="container" id="forum">
+  <p class="slogan">Hier ladet ihr euch die besten Mod Menüs runter 👇</p>
+  <div class="downloads">
+    <div class="mod-box">
+      <div class="mod-info"><strong>Yim Mod Menu V2.0 Enhanced Edition + Loader</strong><br>Version: 1.71</div>
+      <div class="status undetected">Undetected</div>
+      <a href="https://os5.mycloud.com/action/share/d7cd3438-9910-4434-954c-95b6b7d805b6" class="download-btn">Download</a>
+    </div>
+    <div class="mod-box">
+      <div class="mod-info"><strong>Rampage Trainer Enhanced Edition</strong><br>Version: 1.71</div>
+      <div class="status undetected">undetected</div>
+      <a href="https://os5.mycloud.com/action/share/7ae7b04a-9a0b-44e5-9a6a-ed69a3c8ecf8" class="download-btn">Download</a>
+    </div>
+  </div>
+  <div class="link-buttons">
+    <a href="https://www.youtube.com/@gigarazorlp1911" class="link-btn youtube">🎬 YouTube</a>
+    <a href="https://discord.com/invite/UGqxpbrcux" class="link-btn discord">💬 Discord</a>
+  </div>
+</div>
+
+<script>
+const HASHED_PASSWORD="b2b2f104d32c638903e151a9b20d6e27b41d8c0c84cf8458738f83ca2f1dd744";
+const codeInput=document.getElementById('codeInput');
+const loginBtn=document.getElementById('loginBtn');
+const message=document.getElementById('message');
+const loginBox=document.getElementById('loginBox');
+const forum=document.getElementById('forum');
+const forumTitle=document.getElementById('forumTitle');
+const loadingBar=document.getElementById('loadingBar');
+const loadingBarContainer=document.getElementById('loadingBarContainer');
+const loadingPercent=document.getElementById('loadingPercent');
+const loadingText=document.getElementById('loadingText');
+
+const particle=document.createElement('div');
+particle.classList.add('particle');
+loadingBar.appendChild(particle);
+const trail=document.createElement('div');
+trail.classList.add('trail');
+loadingBar.appendChild(trail);
+
+let lastProgress=0,progress=0,target=100,duration=1500,startTime;
+
+async function sha256hex(str){
+  const enc=new TextEncoder();
+  const data=enc.encode(str);
+  const hashBuffer=await crypto.subtle.digest('SHA-256',data);
+  const hashArray=Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+loginBtn.addEventListener('click', loginHandler);
+codeInput.addEventListener('keydown', e=>{if(e.key==='Enter') loginHandler();});
+
+async function loginHandler(){
+  const input=codeInput.value.trim();
+  if(!input){ message.style.color='#f59e0b'; message.textContent='Bitte Code eingeben.'; return; }
+  try{
+    const hashed=await sha256hex(input);
+    if(hashed===HASHED_PASSWORD){
+      message.textContent='';
+      loginBox.style.opacity='0'; 
+      setTimeout(()=>{
+        loginBox.style.display='none';
+        loadingBarContainer.style.display='block';
+        loadingPercent.style.display='block';
+        loadingText.style.display='block';
+        setTimeout(()=>{
+          loadingBarContainer.style.opacity=1;
+          loadingPercent.style.opacity=1;
+          loadingText.style.opacity=1;
+        },50);
+        startTime=performance.now();
+        requestAnimationFrame(animate);
+      },500);
+    }else{message.style.color='red'; message.textContent='❌ Falscher Code.';}
+  }catch(err){console.error(err); message.style.color='red'; message.textContent='Fehler beim Prüfen.';}
+}
+
+function easeOutQuad(t){return t*(2-t);}
+function animate(){
+  const now=performance.now();
+  const elapsed=now-startTime;
+  const eased=easeOutQuad(Math.min(elapsed/duration,1));
+  progress=Math.floor(eased*target);
+
+  loadingBar.style.width=progress+'%';
+  loadingPercent.textContent=progress+'%';
+
+  particle.style.left=`calc(${progress}% - 15px)`;
+  particle.style.opacity=progress<100?1:0;
+
+  const speed=Math.min(Math.abs(progress-lastProgress),5);
+  lastProgress=progress;
+  const trailWidth=30+speed*10;
+  trail.style.left=`calc(${progress}% - ${trailWidth}px)`;
+  trail.style.width=`${trailWidth}px`;
+
+  if(progress<target){requestAnimationFrame(animate);}
+  else{
+    setTimeout(()=>{
+      loadingBarContainer.style.display='none';
+      loadingPercent.style.display='none';
+      loadingText.style.display='none';
+      forum.style.display='block';
+      forumTitle.style.display='block';
+      forum.style.animation='fadeInUpForum 1s ease forwards';
+      forumTitle.style.animation='fadeInUpForum 1s ease forwards';
+    },300);
+  }
+}
+
+// CLICK SOUND
+const clickSound = new Audio('klick.mp3');
+const buttons = document.querySelectorAll('button, .download-btn, .link-btn');
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  });
+});
+</script>
+</body>
+</html>
